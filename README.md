@@ -1,3 +1,3 @@
 # MyMoviePY
-This is for my MoviePY application, Add Border 01
+This is for my MoviePY application, Layout 2_01 in progress
 
