@@ -1,11 +1,66 @@
 import moviepy as mp
-
-from moviepy import VideoFileClip, concatenate_videoclips, CompositeVideoClip
+import os
+from moviepy import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip
 from datetime import datetime
 
 layout_list = ['2_01', '2_02', '2_03', '2_04', '3_01', '3_02', '3_03', '4_01']
 http_finished_location = ''
 
+def mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02, owner_name):
+    black_video_file_name = 'C:\\media\\mp4\\' + 'BlackVideo1Minute.mp4'
+    black_video_file = VideoFileClip(black_video_file_name)
+    black_video = black_video_file.with_effects([mp.video.fx.Resize(width=120)])
+
+    outtro_video_file_name = 'C:\\media\\mp4\\' + 'FuzikScreen3Seconds.mp4'
+    outtro_video_file = VideoFileClip(outtro_video_file_name).with_effects([mp.video.fx.Resize(width=120)])
+
+    new_clip1 = VideoFileClip(video01_filename, fps_source='fps')
+    new_clip2 = VideoFileClip(video02_filename, fps_source='fps')
+
+    if delay01 > 0:
+        black_video01 = black_video.subclip('00:00:00.000', milli_to_timecode(delay01))
+        black_video01 = black_video01.with_effects([mp.video.fx.Resize(width=120)])
+
+        new_clip1 = concatenate_videoclips([black_video01, new_clip1])
+        if volume01 != 1:
+            new_clip1 = new_clip1.volumex(volume01)
+
+    if delay02 > 0:
+        black_video02 = black_video.subclip('00:00:00.000', milli_to_timecode(delay02))
+        black_video02 = black_video02.with_effects([mp.video.fx.Resize(width=120)])
+
+        new_clip2 = concatenate_videoclips([black_video02, new_clip2])
+
+        if volume02 != 1:
+            new_clip2 = new_clip2.volumex(volume02)
+
+    final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)), new_clip2.with_position((0, 0))],
+                                    size=(192,108))
+
+    now = datetime.now()
+    dt_string = now.strftime("%d%m%Y%H%M%S")
+
+    filename = str(owner_name + '_' + dt_string)
+
+    video_filename = filename + "_108.mp4"
+    sound_filename = filename + "_108.mp3"
+    wave_filename = filename + "_wave.mp4"
+
+    #final_clip.write_videofile(sound_filename, codec='mp3')
+    final_clip.write_videofile(video_filename)
+
+    MP4ToMP3(video_filename, sound_filename)
+
+    cmd = "seewav -r 30 --width 1313 --height 341 --bar 120 --color \'200,200,0\' " + sound_filename + " " + wave_filename
+
+    returned_value = os.system(cmd)
+
+    return sound_filename
+
+def MP4ToMP3(mp4, mp3):
+    FILETOCONVERT = AudioFileClip(mp4)
+    FILETOCONVERT.write_audiofile(mp3)
+    FILETOCONVERT.close()
 def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02, owner_name):
     black_video_file_name = 'C:\\media\\mp4\\' + 'BlackVideo1Minute.mp4'
     black_video_file = VideoFileClip(black_video_file_name)
@@ -138,6 +193,6 @@ def create_seewav(input_filename, output_filename):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     #create_seewav("in05.mp4","out05.mp4")
-    merge_full('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4' , 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
-
+    #merge_full('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4' , 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
+    mix_sound('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4' , 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
