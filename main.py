@@ -1,28 +1,48 @@
 import moviepy as mp
-from moviepy import VideoFileClip
+
+from moviepy import VideoFileClip, concatenate_videoclips, CompositeVideoClip
+from datetime import datetime
 
 layout_list = ['2_01', '2_02', '2_03', '2_04', '3_01', '3_02', '3_03', '4_01']
-def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02):
+http_finished_location = ''
+
+def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02, owner_name):
+    black_video_file_name = 'C:\\media\\mp4\\' + 'BlackVideo1Minute.mp4'
+    black_video_file = VideoFileClip(black_video_file_name)
+    black_video = black_video_file.with_effects([mp.video.fx.Resize(width=960)])
+
+    outtro_video_file_name = 'C:\\media\\mp4\\' + 'FuzikScreen3Seconds.mp4'
+    outtro_video_file = VideoFileClip(outtro_video_file_name)
+    #outtro_video = outtro_video_file.resize(width=1920)
+
+    outtro_video = outtro_video_file.with_effects([mp.video.fx.Resize(width=1920)])
+
     if layout_name == '2_01':
         clip1 = VideoFileClip(video01_filename, fps_source='fps')
         clip2 = VideoFileClip(video02_filename, fps_source='fps')
 
-        new_clip1 = clip1.resize((536, 1080))
-        new_clip2 = clip2.resize((1184, 664))
+        new_clip1 = clip1.with_effects([mp.video.fx.Resize((607, 1080))])
+        new_clip2 = clip2.with_effects([mp.video.fx.Resize((1313, 738))])
+        #new_clip2 = clip2.resize((1184, 664))
 
         if delay01 > 0:
             black_video01 = black_video.subclip('00:00:00.000', milli_to_timecode(delay01))
-            new_clip1 = concatenate_videoclips([black_video01.resize((536, 1080)), clip1.resize((536, 1080))])
+            black_video01 = black_video01.with_effects([mp.video.fx.Resize((607, 1080))])
+
+            new_clip1 = concatenate_videoclips([black_video01, new_clip1])
             if volume01 != 1:
                 new_clip1 = new_clip1.volumex(volume01)
 
         if delay02 > 0:
             black_video02 = black_video.subclip('00:00:00.000', milli_to_timecode(delay02))
-            new_clip2 = concatenate_videoclips([black_video02.resize((1184, 664)), clip2.resize((1184, 664))])
+            black_video02 = black_video02.with_effects([mp.video.fx.Resize((1313, 738))])
+
+            new_clip2 = concatenate_videoclips([black_video02, new_clip2])
+
             if volume02 != 1:
                 new_clip2 = new_clip2.volumex(volume02)
 
-        final_clip = CompositeVideoClip([new_clip1.set_position((200, 0)), new_clip2.set_position((736, 272))],
+        final_clip = CompositeVideoClip([new_clip1.with_position((0,0)) , new_clip2.with_position((608, 0))],
                                         size=(1920, 1080))
 
     if layout_name in layout_list:
@@ -54,15 +74,19 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
 
         final_clip.save_frame(final_filename.replace('.mp4', '.png'), t=auto_preview_frame)
 
-        final_clip2 = concatenate_videoclips([final_clip.resize(width=1920), outtro_video])
+        final_clip.with_effects([mp.video.fx.Resize(width=1920)])
 
-        final_clip2.write_videofile(final_filename)
+        final_clip2 = concatenate_videoclips([final_clip, outtro_video])
+
+
+        final_clip2.subclipped(0, 10).write_videofile(final_filename)
         final_clip.close()
         final_clip2.close()
 
         print(final_filename)
         print(final_filename.replace('.mp4', '.png'))
 
+        """
         srv = pysftp.Connection(host=HOSTNAME, username=USERNAME,
                                     password=PASSWORD)
 
@@ -77,6 +101,7 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
 
         # Closes the connection
         srv.close()
+        """
     else:
         video_url = ''
 
@@ -112,6 +137,7 @@ def create_seewav(input_filename, output_filename):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    create_seewav("in05.mp4","out05.mp4")
+    #create_seewav("in05.mp4","out05.mp4")
+    merge_full('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4' , 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
