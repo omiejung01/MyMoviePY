@@ -3,7 +3,7 @@ import os
 from moviepy import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip
 from datetime import datetime
 
-layout_list = ['2_01', '2_02', '2_03', '2_04', '3_01', '3_02', '3_03', '4_01']
+layout_list = ['2_01', '2_02', '2_03', '2_04', '2_05', '2_06', '2_07', '2_08', '3_01', '3_02', '3_03', '3_04', '3_05', '3_06', '3_07', '4_01']
 http_finished_location = ''
 
 def mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02, owner_name):
@@ -204,6 +204,6 @@ def create_seewav(input_filename, output_filename):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     #create_seewav("in05.mp4","out05.mp4")
-    merge_full('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
+    merge_full('2_06', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
     #mix_sound('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    print('Ad Astra Abyssosque')
