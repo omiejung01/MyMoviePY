@@ -1,12 +1,31 @@
 import moviepy as mp
 import os
-from moviepy import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip
+from moviepy import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip, ColorClip, TextClip
 from datetime import datetime
 
 layout_list = ['2_01', '2_02', '2_03', '2_04', '2_05', '2_06', '2_07', '2_08',
                '3_01', '3_02', '3_03', '3_04', '3_05', '3_06', '3_07', '4_01']
 http_finished_location = ''
 
+def AlphaVideo():
+    canvas_size = (1920, 1080)
+
+    # 2. Create your content (e.g., a TextClip)
+    # We ensure the text is centered and has a transparent background
+    txt_clip = TextClip(
+        text="Transparent Video",
+        font_size=150,
+        color='white',
+        font="Arial",  # Ensure this font is installed on your system
+        duration=5
+    ).with_position('center')
+
+    # 3. Create the final composition
+    # We don't add a background clip so the empty space stays transparent
+    final_clip = CompositeVideoClip([txt_clip], size=canvas_size)
+    final_clip = final_clip.with_duration(5)
+
+    return final_clip
 def mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02, owner_name):
     black_video_file_name = 'C:\\media\\mp4\\' + 'BlackVideo1Minute.mp4'
     black_video_file = VideoFileClip(black_video_file_name)
@@ -67,6 +86,10 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
     black_video_file = VideoFileClip(black_video_file_name)
     black_video = black_video_file.with_effects([mp.video.fx.Resize(width=960)])
 
+    alpha_video_file_name = 'C:\\media\\mp4\\' + 'AlphaVideo.mp4'
+    alpha_video_file = VideoFileClip(alpha_video_file_name, is_mask=True, has_mask=False)
+    alpha_video = alpha_video_file.with_effects([mp.video.fx.Resize(width=1920)])
+
     outtro_video_file_name = 'C:\\media\\mp4\\' + 'FuzikScreen3Seconds.mp4'
     outtro_video_file = VideoFileClip(outtro_video_file_name)
     #outtro_video = outtro_video_file.resize(width=1920)
@@ -93,16 +116,19 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
                 new_clip1 = new_clip1.volumex(volume01)
         else:
             new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
-            new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
+            new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
             #new_clip1 = mp.video.fx.FadeIn(5, initial_color=[0, 0, 0]).apply(new_clip1)
 
         if delay02 > 0:
-            black_video02 = black_video.subclipped('00:00:00.000', milli_to_timecode(delay02))
-            black_video02 = black_video02.with_effects([mp.video.fx.Resize((630, 350))])
+            #alpha_video02 = alpha_video.subclipped('00:00:00.000', milli_to_timecode(delay02))
+            #alpha_video02 = alpha_video02.with_effects([mp.video.fx.Resize((630, 350))])
+
             new_clip2 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip2)
             #new_clip2 = mp.video.fx.FadeIn(5, initial_color=[0, 0, 0]).apply(new_clip2)
             new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
-            new_clip2 = concatenate_videoclips([black_video02, new_clip2])
+
+            #new_clip2 = concatenate_videoclips([alpha_video02, new_clip2], bg_color=None, is_mask=True)
+
 
             if volume02 != 1:
                 new_clip2 = new_clip2.volumex(volume02)
@@ -110,7 +136,9 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
             new_clip2 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip2)
             new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
 
-        final_clip = CompositeVideoClip([new_clip1.with_position((0,0)), new_clip2.with_position((100, 620)) ],
+        final_clip = CompositeVideoClip([new_clip1.with_position((0,0)),
+                                         new_clip2.with_position((100, 620)).with_start(milli_to_timecode(delay02))],
+                                        is_mask=False,
                                         size=(1920, 1080))
 
     if layout_name == '2_06':
@@ -183,8 +211,8 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
 
         final_clip2 = concatenate_videoclips([final_clip, outtro_video])
 
-        final_clip2.subclipped(0, 10).write_videofile(final_filename)
-        #final_clip2.write_videofile(final_filename)
+        #final_clip2.subclipped(0, 10).write_videofile(final_filename)
+        final_clip2.write_videofile(final_filename)
         final_clip.close()
         final_clip2.close()
 
