@@ -78,26 +78,27 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
         clip2 = VideoFileClip(video02_filename, fps_source='fps')
 
         new_clip1 = clip1.with_effects([mp.video.fx.Resize((1910, 1070))])
-        new_clip2 = clip2.with_effects([mp.video.fx.Resize((640, 360))])
+        new_clip2 = clip2.with_effects([mp.video.fx.Resize((630, 350))])
         #new_clip2 = clip2.resize((1184, 664))
 
         if delay01 > 0:
             black_video01 = black_video.subclipped('00:00:00.000', milli_to_timecode(delay01))
             black_video01 = black_video01.with_effects([mp.video.fx.Resize((1910, 1070))])
-            #new_clip1 = mp.video.fx.FadeIn(5, initial_color = [0,0,0]).apply(new_clip1)
             new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
-            new_clip1 = mp.video.fx.FadeIn(5, initial_color=[0, 0, 0]).apply(new_clip1)
+            #new_clip1 = mp.video.fx.FadeIn(5, initial_color=[0, 0, 0]).apply(new_clip1)
+            new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
             new_clip1 = concatenate_videoclips([black_video01, new_clip1])
 
             if volume01 != 1:
                 new_clip1 = new_clip1.volumex(volume01)
         else:
             new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
-            new_clip1 = mp.video.fx.FadeIn(5, initial_color=[0, 0, 0]).apply(new_clip1)
+            new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
+            #new_clip1 = mp.video.fx.FadeIn(5, initial_color=[0, 0, 0]).apply(new_clip1)
 
         if delay02 > 0:
             black_video02 = black_video.subclipped('00:00:00.000', milli_to_timecode(delay02))
-            black_video02 = black_video02.with_effects([mp.video.fx.Resize((640, 360))])
+            black_video02 = black_video02.with_effects([mp.video.fx.Resize((630, 350))])
             new_clip2 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip2)
             #new_clip2 = mp.video.fx.FadeIn(5, initial_color=[0, 0, 0]).apply(new_clip2)
             new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
@@ -243,7 +244,7 @@ def create_seewav(input_filename, output_filename):
 if __name__ == '__main__':
     #create_seewav("in05.mp4","out05.mp4")
     #merge_full('2_06', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
-    merge_full('2_01','C:\\media\\mp4\\Jazz-02-Drum.mp4', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 0, 2168, 1.0,
+    merge_full('2_01', 'C:\\media\\mp4\\Jazz-02-Drum.mp4', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 0, 2168, 1.0,
                1.0, 'omiejung')
     #mix_sound('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
     print('Ad Astra Abyssosque')
