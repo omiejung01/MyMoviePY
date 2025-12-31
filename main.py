@@ -116,10 +116,10 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
                 new_clip1 = new_clip1.volumex(volume01)
         else:
             new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
-            new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
+            new_clip1 = mp.video.fx.FadeIn(2).apply(new_clip1)
             #new_clip1 = mp.video.fx.FadeIn(5, initial_color=[0, 0, 0]).apply(new_clip1)
 
-        if delay02 > 0:
+        #if delay02 > 0:
             #alpha_video02 = alpha_video.subclipped('00:00:00.000', milli_to_timecode(delay02))
             #alpha_video02 = alpha_video02.with_effects([mp.video.fx.Resize((630, 350))])
 
@@ -130,11 +130,18 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
             #new_clip2 = concatenate_videoclips([alpha_video02, new_clip2], bg_color=None, is_mask=True)
 
 
-            if volume02 != 1:
-                new_clip2 = new_clip2.volumex(volume02)
-        else:
-            new_clip2 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip2)
-            new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
+         #   if volume02 != 1:
+         #       new_clip2 = new_clip2.volumex(volume02)
+        #else:
+        #    new_clip2 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip2)
+        #    new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
+
+        if volume02 != 1:
+            new_clip2 = new_clip2.volumex(volume02)
+
+        new_clip2 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip2)
+        new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
+        new_clip2 = mp.video.fx.CrossFadeOut(2).apply(new_clip2)
 
         final_clip = CompositeVideoClip([new_clip1.with_position((0,0)),
                                          new_clip2.with_position((100, 620)).with_start(milli_to_timecode(delay02))],
@@ -212,7 +219,8 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
         final_clip2 = concatenate_videoclips([final_clip, outtro_video])
 
         #final_clip2.subclipped(0, 10).write_videofile(final_filename)
-        final_clip2.write_videofile(final_filename)
+        final_clip2.subclipped(max(0, final_clip2.duration - 15), final_clip2.duration).write_videofile(final_filename)
+        #final_clip2.write_videofile(final_filename)
         final_clip.close()
         final_clip2.close()
 
