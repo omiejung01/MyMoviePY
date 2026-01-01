@@ -144,6 +144,54 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
                                          new_clip2.with_position((100, 620)).with_start(milli_to_timecode(delay02))],
                                         is_mask=False,
                                         size=(1920, 1080))
+    if layout_name == '2_02':
+        clip1 = VideoFileClip(video01_filename, fps_source='fps')
+        clip2 = VideoFileClip(video02_filename, fps_source='fps')
+
+        total_duration01 = (clip1.duration * 1000) + delay01  # millisecond
+        total_duration02 = (clip2.duration * 1000) + delay02  # millisecond
+
+        new_clip1 = clip1.with_effects([mp.video.fx.Resize((1910, 1070))])
+        new_clip2 = clip2.with_effects([mp.video.fx.Resize((630, 350))])
+
+        new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
+        new_clip2 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip2)
+
+        if delay01 > 0:
+            if total_duration01 >= total_duration02:
+                new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
+                new_clip1 = mp.video.fx.CrossFadeOut(2).apply(new_clip1)
+            else:
+                new_clip1 = mp.video.fx.FadeIn(2).apply(new_clip1)
+                new_clip1 = mp.video.fx.FadeOut(2).apply(new_clip1)
+        else:
+            if total_duration01 >= total_duration02:
+                new_clip1 = mp.video.fx.FadeIn(2).apply(new_clip1)
+                new_clip1 = mp.video.fx.FadeOut(2).apply(new_clip1)
+            else:
+                new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
+                new_clip1 = mp.video.fx.CrossFadeOut(2).apply(new_clip1)
+
+        if volume01 != 1:
+            new_clip1 = new_clip1.volumex(volume01)
+
+        # Clip 02
+        if delay02 > 0:
+            new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
+        else:
+            new_clip2 = mp.video.fx.FadeIn(2).apply(new_clip2)
+
+        if total_duration01 >= total_duration02:
+            new_clip2 = mp.video.fx.CrossFadeOut(2).apply(new_clip2)
+        else:
+            new_clip2 = mp.video.fx.FadeOut(2).apply(new_clip2)
+        if volume02 != 1:
+            new_clip2 = new_clip2.volumex(volume02)
+
+        final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01)),
+                                         new_clip2.with_position((100, 620)).with_start(milli_to_timecode(delay02))],
+                                        is_mask=False,
+                                        size=(1920, 1080))
 
     if layout_name == '2_06':
         clip1 = VideoFileClip(video01_filename, fps_source='fps')
