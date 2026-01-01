@@ -1,5 +1,5 @@
 # MyMoviePY
-This is for my MoviePY application, Mix 2 Music clips and generate sound wave, Layout 2-02 - on progress 01. 
+This is for my MoviePY application, Mix 2 Music clips and generate sound wave, Layout 2-02 - finished. 
 
 # Requirements
 Please run this command in PyCharm

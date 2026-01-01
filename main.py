@@ -189,7 +189,7 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
             new_clip2 = new_clip2.volumex(volume02)
 
         final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01)),
-                                         new_clip2.with_position((100, 620)).with_start(milli_to_timecode(delay02))],
+                                         new_clip2.with_position((100, 60)).with_start(milli_to_timecode(delay02))],
                                         is_mask=False,
                                         size=(1920, 1080))
 
@@ -261,9 +261,9 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
         final_clip.with_effects([mp.video.fx.Resize(width=1920)])
         final_clip2 = concatenate_videoclips([final_clip, outtro_video])
 
-        #final_clip2.subclipped(0, 10).write_videofile(final_filename)
+        final_clip2.subclipped(0, 10).write_videofile(final_filename)
         #final_clip2.subclipped(max(0, final_clip2.duration - 15), final_clip2.duration).write_videofile(final_filename)
-        final_clip2.write_videofile(final_filename)
+        #final_clip2.write_videofile(final_filename)
         final_clip.close()
         final_clip2.close()
 
@@ -323,13 +323,13 @@ def create_seewav(input_filename, output_filename):
 if __name__ == '__main__':
     #create_seewav("in05.mp4","out05.mp4")
     #merge_full('2_06', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
-    merge_full('2_01', 'C:\\media\\mp4\\Jazz-02-Drum.mp4', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4',
-               0, 2168,
-               1.0, 1.0,
-               'omiejung')
-    #merge_full('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 'C:\\media\\mp4\\Jazz-02-Drum.mp4',
-    #           2168, 0,
+    #merge_full('2_02', 'C:\\media\\mp4\\Jazz-02-Drum.mp4', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4',
+    #           0, 2168,
     #           1.0, 1.0,
     #           'omiejung')
+    merge_full('2_02', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 'C:\\media\\mp4\\Jazz-02-Drum.mp4',
+               2168, 0,
+               1.0, 1.0,
+               'omiejung')
     #mix_sound('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
     print('Ad Astra Abyssosque')
