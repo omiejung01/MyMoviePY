@@ -328,6 +328,56 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
         final_clip = CompositeVideoClip([new_clip1.with_position((0,0)), new_clip2.with_position((613, 0)), wav_clip4.with_position((613,743))],
                                         size=(1920, 1080))
 
+    if layout_name == '2_07':
+        clip1 = VideoFileClip(video01_filename, fps_source='fps')
+        clip2 = VideoFileClip(video02_filename, fps_source='fps')
+
+        total_duration01 = (clip1.duration * 1000) + delay01  # millisecond
+        total_duration02 = (clip2.duration * 1000) + delay02  # millisecond
+
+        new_clip1 = clip1.with_effects([mp.video.fx.Resize((1910, 1070))])
+        new_clip2 = clip2.with_effects([mp.video.fx.Resize((350, 630))])
+
+        new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
+        new_clip2 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip2)
+
+        if delay01 > 0:
+            if total_duration01 >= total_duration02:
+                new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
+                new_clip1 = mp.video.fx.CrossFadeOut(2).apply(new_clip1)
+            else:
+                new_clip1 = mp.video.fx.FadeIn(2).apply(new_clip1)
+                new_clip1 = mp.video.fx.FadeOut(2).apply(new_clip1)
+        else:
+            if total_duration01 >= total_duration02:
+                new_clip1 = mp.video.fx.FadeIn(2).apply(new_clip1)
+                new_clip1 = mp.video.fx.FadeOut(2).apply(new_clip1)
+            else:
+                new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
+                new_clip1 = mp.video.fx.CrossFadeOut(2).apply(new_clip1)
+
+        if volume01 != 1:
+            new_clip1 = new_clip1.volumex(volume01)
+
+        # Clip 02
+        if delay02 > 0:
+            new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
+        else:
+            new_clip2 = mp.video.fx.FadeIn(2).apply(new_clip2)
+
+        if total_duration01 >= total_duration02:
+            new_clip2 = mp.video.fx.CrossFadeOut(2).apply(new_clip2)
+        else:
+            new_clip2 = mp.video.fx.FadeOut(2).apply(new_clip2)
+        if volume02 != 1:
+            new_clip2 = new_clip2.volumex(volume02)
+
+        final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01)),
+                                         new_clip2.with_position((1490, 380)).with_start(
+                                             milli_to_timecode(delay02))],
+                                        is_mask=False,
+                                        size=(1920, 1080))
+
     if layout_name in layout_list:
     # datetime object containing current date and time
         now = datetime.now()
@@ -421,13 +471,15 @@ def create_seewav(input_filename, output_filename):
 if __name__ == '__main__':
     #create_seewav("in05.mp4","out05.mp4")
     #merge_full('2_06', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
+    merge_full('2_07', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 0, 0, 1.0, 1.0, 'omiejung')
+
     #merge_full('2_04', 'C:\\media\\mp4\\Jazz-02-Drum.mp4', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4',
     #           0, 2168,
     #           1.0, 1.0,
     #           'omiejung')
-    merge_full('2_04', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 'C:\\media\\mp4\\Jazz-02-Drum.mp4',
-               2168, 0,
-               1.0, 1.0,
-               'omiejung')
+    #merge_full('2_04', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 'C:\\media\\mp4\\Jazz-02-Drum.mp4',
+    #           2168, 0,
+    #           1.0, 1.0,
+    #           'omiejung')
     #mix_sound('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
     print('Ad Astra Abyssosque')
