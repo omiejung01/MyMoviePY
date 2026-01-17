@@ -1,6 +1,6 @@
 import moviepy as mp
 import os
-from moviepy import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip, ColorClip, TextClip
+from moviepy import VideoFileClip, concatenate_videoclips, CompositeVideoClip, AudioFileClip, ColorClip, TextClip, ImageClip
 from datetime import datetime
 
 layout_list = ['2_01', '2_02', '2_03', '2_04', '2_05', '2_06', '2_07', '2_08',
@@ -26,6 +26,31 @@ def AlphaVideo():
     final_clip = final_clip.with_duration(5)
 
     return final_clip
+
+
+def gen_sound(video01_filename, volume01, owner_name):
+    new_clip1 = VideoFileClip(video01_filename, fps_source='fps')
+    final_clip = CompositeVideoClip([new_clip1.with_position((0, 0))],
+                                    size=(192, 108))
+    now = datetime.now()
+    dt_string = now.strftime("%d%m%Y%H%M%S")
+
+    filename = str(owner_name + '_' + dt_string)
+
+    video_filename = filename + "_108.mp4"
+    sound_filename = filename + "_108.mp3"
+    wave_filename = filename + "_wave.mp4"
+
+    # final_clip.write_videofile(sound_filename, codec='mp3')
+    final_clip.write_videofile(video_filename)
+
+    MP4ToMP3(video_filename, sound_filename)
+
+    cmd = "seewav -r 30 --width 960 --height 540 --bar 120 --color 1,1,0 " + sound_filename + " " + wave_filename
+
+    returned_value = os.system(cmd)
+
+    return wave_filename
 def mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02, owner_name):
     black_video_file_name = 'C:\\media\\mp4\\' + 'BlackVideo1Minute.mp4'
     black_video_file = VideoFileClip(black_video_file_name)
@@ -291,8 +316,25 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
                                         size=(1920, 1080))
 
     if layout_name == '2_05':
+
+        image_2_05_top_filename = 'C:\\media\images\\2_05_top.png'
+        image_2_05_bottom_filename = 'C:\\media\images\\2_05_bottom.png'
+
         clip1 = VideoFileClip(video01_filename, fps_source='fps')
         clip2 = VideoFileClip(video02_filename, fps_source='fps')
+
+        Image205Top = ImageClip(image_2_05_top_filename)
+        Image205Top = Image205Top.with_start(3).with_duration(7)
+
+        # Position the image clip in the center of the screen
+        Image205Top = Image205Top.with_position(("center", "center"))
+
+        # Combine the video and the image overlay into a single clip
+
+
+
+        Image205Bottom = ImageClip(image_2_05_bottom_filename)
+
 
         # x 950
         # y 530
@@ -321,6 +363,22 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
 
         new_clip2 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip2)
 
+        wave01 = gen_sound(video01_filename, volume01, owner_name)
+
+        wav01_clip = VideoFileClip(wave01, fps_source='fps')
+        wav01_clip2 = wav01_clip.with_volume_scaled(0.0)
+        wav01_clip3 = wav01_clip2.with_effects([mp.video.fx.Resize((955, 355))])
+        wav01_clip4 = mp.video.fx.Margin(top=5,  right=5, color=(255, 255, 0)).add_margin(wav01_clip3)
+
+        wav01_clip4 = CompositeVideoClip([wav01_clip4, Image205Top])
+
+        wave02 = gen_sound(video02_filename, volume02, owner_name)
+
+        wav02_clip = VideoFileClip(wave02, fps_source='fps')
+        wav02_clip2 = wav02_clip.with_volume_scaled(0.0)
+        wav02_clip3 = wav02_clip2.with_effects([mp.video.fx.Resize((955, 355))])
+        wav02_clip4 = mp.video.fx.Margin(top=5, right=5, color=(255, 255, 0)).add_margin(wav02_clip3)
+
         wave_file = mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02, owner_name)
 
         final_wav_clip = VideoFileClip(wave_file, fps_source='fps')
@@ -332,7 +390,9 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
         #                                size=(1920, 1080))
 
         # 5 + 355 + 5 + 355 + 5 + 350 + 5
-        final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)), new_clip2.with_position((0, 535)), final_wav_clip4.with_position((960, 720))],
+        final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)), new_clip2.with_position((0, 535)),
+                                         wav01_clip4.with_position((960, 0)), wav02_clip4.with_position((960, 360)),
+                                         final_wav_clip4.with_position((960, 720))],
                                         size=(1920, 1080))
 
     if layout_name == '2_06':
