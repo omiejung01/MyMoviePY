@@ -324,17 +324,17 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
         clip2 = VideoFileClip(video02_filename, fps_source='fps')
 
         Image205Top = ImageClip(image_2_05_top_filename)
-        Image205Top = Image205Top.with_start(3).with_duration(7)
+        Image205Top = Image205Top.with_start(0).with_duration(clip1.duration)
 
         # Position the image clip in the center of the screen
-        Image205Top = Image205Top.with_position(("center", "center"))
-
-        # Combine the video and the image overlay into a single clip
-
-
+        Image205Top = Image205Top.with_effects([mp.video.fx.Resize((100, 100))]).with_position((20, 20))
 
         Image205Bottom = ImageClip(image_2_05_bottom_filename)
+        Image205Bottom = Image205Bottom.with_start(0).with_duration(clip2.duration)
 
+        # Position the image clip in the center of the screen
+        Image205Bottom = Image205Bottom.with_effects([mp.video.fx.Resize((100, 100))]).with_position((20, 20))
+        # Combine the video and the image overlay into a single clip
 
         # x 950
         # y 530
@@ -378,6 +378,8 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
         wav02_clip2 = wav02_clip.with_volume_scaled(0.0)
         wav02_clip3 = wav02_clip2.with_effects([mp.video.fx.Resize((955, 355))])
         wav02_clip4 = mp.video.fx.Margin(top=5, right=5, color=(255, 255, 0)).add_margin(wav02_clip3)
+
+        wav02_clip4 = CompositeVideoClip([wav02_clip4, Image205Bottom])
 
         wave_file = mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02, owner_name)
 
