@@ -106,7 +106,10 @@ def MP4ToMP3(mp4, mp3):
     FILETOCONVERT = AudioFileClip(mp4)
     FILETOCONVERT.write_audiofile(mp3)
     FILETOCONVERT.close()
-def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02, owner_name):
+def merge_full(layout_name, video01_filename, video02_filename, video03_filename, video04_filename,
+               delay01, delay02, delay03, delay04,
+               volume01, volume02, volume03, volume04,
+               owner_name):
     black_video_file_name = 'C:\\media\\mp4\\' + 'BlackVideo1Minute.mp4'
     black_video_file = VideoFileClip(black_video_file_name)
     black_video = black_video_file.with_effects([mp.video.fx.Resize(width=960)])
@@ -484,6 +487,227 @@ def merge_full(layout_name, video01_filename, video02_filename, delay01, delay02
                                         is_mask=False,
                                         size=(1920, 1080))
 
+    if layout_name == '2_08':
+
+        image_2_08_left_filename = 'C:\\media\images\\2_08_left.png'
+        image_2_08_right_filename = 'C:\\media\images\\2_08_right.png'
+
+        clip1 = VideoFileClip(video01_filename, fps_source='fps')
+        clip2 = VideoFileClip(video02_filename, fps_source='fps')
+
+        Image205Top = ImageClip(image_2_05_top_filename)
+        Image205Top = Image205Top.with_start(0).with_duration(clip1.duration)
+
+        # Position the image clip in the center of the screen
+        Image205Top = Image205Top.with_effects([mp.video.fx.Resize((100, 100))]).with_position((20, 20))
+
+        Image205Bottom = ImageClip(image_2_05_bottom_filename)
+        Image205Bottom = Image205Bottom.with_start(0).with_duration(clip2.duration)
+
+        # Position the image clip in the center of the screen
+        Image205Bottom = Image205Bottom.with_effects([mp.video.fx.Resize((100, 100))]).with_position((20, 20))
+        # Combine the video and the image overlay into a single clip
+
+        # x 950
+        # y 530
+
+        new_clip1 = clip1.with_effects([mp.video.fx.Resize((950, 530))])
+        new_clip2 = clip2.with_effects([mp.video.fx.Resize((950, 535))])
+        # new_clip2 = clip2.resize((1184, 664))
+
+        if delay01 > 0:
+            black_video01 = black_video.subclipped('00:00:00.000', milli_to_timecode(delay01))
+            black_video01 = black_video01.with_effects([mp.video.fx.Resize((950, 530))])
+            new_clip1 = concatenate_videoclips([black_video01, new_clip1])
+
+            if volume01 != 1:
+                new_clip1 = new_clip1.volumex(volume01)
+
+        new_clip1 = mp.video.fx.Margin(top=5, left=5, right=5, color=(255, 255, 0)).add_margin(new_clip1)
+
+        if delay02 > 0:
+            black_video02 = black_video.subclipped('00:00:00.000', milli_to_timecode(delay02))
+            black_video02 = black_video02.with_effects([mp.video.fx.Resize((950, 535))])
+            new_clip2 = concatenate_videoclips([black_video02, new_clip2])
+
+            if volume02 != 1:
+                new_clip2 = new_clip2.volumex(volume02)
+
+        new_clip2 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip2)
+
+        wave01 = gen_sound(video01_filename, volume01, owner_name)
+
+        wav01_clip = VideoFileClip(wave01, fps_source='fps')
+        wav01_clip2 = wav01_clip.with_volume_scaled(0.0)
+        wav01_clip3 = wav01_clip2.with_effects([mp.video.fx.Resize((955, 355))])
+        wav01_clip4 = mp.video.fx.Margin(top=5, right=5, color=(255, 255, 0)).add_margin(wav01_clip3)
+
+        wav01_clip4 = CompositeVideoClip([wav01_clip4, Image205Top])
+
+        wave02 = gen_sound(video02_filename, volume02, owner_name)
+
+        wav02_clip = VideoFileClip(wave02, fps_source='fps')
+        wav02_clip2 = wav02_clip.with_volume_scaled(0.0)
+        wav02_clip3 = wav02_clip2.with_effects([mp.video.fx.Resize((955, 355))])
+        wav02_clip4 = mp.video.fx.Margin(top=5, right=5, color=(255, 255, 0)).add_margin(wav02_clip3)
+
+        wav02_clip4 = CompositeVideoClip([wav02_clip4, Image205Bottom])
+
+        wave_file = mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02,
+                              owner_name)
+
+        final_wav_clip = VideoFileClip(wave_file, fps_source='fps')
+        final_wav_clip2 = final_wav_clip.with_volume_scaled(0.0)
+        final_wav_clip3 = final_wav_clip2.with_effects([mp.video.fx.Resize((955, 350))])
+        final_wav_clip4 = mp.video.fx.Margin(top=5, bottom=5, right=5, color=(255, 255, 0)).add_margin(final_wav_clip3)
+
+        # final_clip = CompositeVideoClip([new_clip1.with_position((0,0)), new_clip2.with_position((613, 0)), wav_clip4.with_position((613,743))],
+        #                                size=(1920, 1080))
+
+        # 5 + 355 + 5 + 355 + 5 + 350 + 5
+        final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)), new_clip2.with_position((0, 535)),
+                                         wav01_clip4.with_position((960, 0)), wav02_clip4.with_position((960, 360)),
+                                         final_wav_clip4.with_position((960, 720))],
+                                        size=(1920, 1080))
+
+
+    if layout_name == '3_01':
+        clip1 = VideoFileClip(video01_filename, fps_source='fps')
+        clip2 = VideoFileClip(video02_filename, fps_source='fps')
+        clip3 = VideoFileClip(video03_filename, fps_source='fps')
+
+        new_clip1 = clip1.resize((536, 1080))
+        new_clip2 = clip2.resize((960, 540))
+        new_clip3 = clip3.resize((960, 540))
+
+        if delay01 > 0:
+            black_video01 = black_video.subclip('00:00:00.000', milli_to_timecode(delay01))
+            new_clip1 = concatenate_videoclips([black_video01.resize((536, 1080)), clip1.resize((536, 1080))])
+            if volume01 != 1:
+                new_clip1 = new_clip1.volumex(volume01)
+
+        if delay02 > 0:
+            black_video02 = black_video.subclip('00:00:00.000', milli_to_timecode(delay02))
+            new_clip2 = concatenate_videoclips([black_video02.resize((960, 540)), clip2.resize((960, 540))])
+            if volume02 != 1:
+                new_clip2 = new_clip2.volumex(volume02)
+
+        if delay03 > 0:
+            black_video03 = black_video.subclip('00:00:00.000', milli_to_timecode(delay03))
+            new_clip3 = concatenate_videoclips([black_video03.resize((960, 540)), clip3.resize((960, 540))])
+            if volume03 != 1:
+                new_clip3 = new_clip3.volumex(volume03)
+
+        final_clip = CompositeVideoClip(
+            [new_clip1.set_position((424, 0)), new_clip2.set_position((960, 0)),
+             new_clip3.set_position((960, 540))],
+            size=(1920, 1080))
+
+    if layout_name == '3_02':
+        clip1 = VideoFileClip(video01_filename, fps_source='fps')
+        clip2 = VideoFileClip(video02_filename, fps_source='fps')
+        clip3 = VideoFileClip(video03_filename, fps_source='fps')
+
+        new_clip1 = clip1.resize((960, 540))
+        new_clip2 = clip2.resize((960, 540))
+        new_clip3 = clip3.resize((960, 540))
+
+        if delay01 > 0:
+            black_video01 = black_video.subclip('00:00:00.000', milli_to_timecode(delay01))
+            new_clip1 = concatenate_videoclips([black_video01, clip1.resize((960, 540))])
+            if volume01 != 1:
+                new_clip1 = new_clip1.volumex(volume01)
+
+        if delay02 > 0:
+            black_video02 = black_video.subclip('00:00:00.000', milli_to_timecode(delay02))
+            new_clip2 = concatenate_videoclips([black_video02, clip2.resize((960, 540))])
+            if volume02 != 1:
+                new_clip2 = new_clip2.volumex(volume02)
+
+        if delay03 > 0:
+            black_video03 = black_video.subclip('00:00:00.000', milli_to_timecode(delay03))
+            new_clip3 = concatenate_videoclips([black_video03, clip3.resize((960, 540))])
+            if volume03 != 1:
+                new_clip3 = new_clip3.volumex(volume03)
+
+        final_clip = CompositeVideoClip(
+            [new_clip1.set_position((0, 0)), new_clip2.set_position((960, 0)),
+             new_clip3.set_position((480, 540))],
+            size=(1920, 1080))
+
+    if layout_name == '3_03':
+        clip1 = VideoFileClip(video01_filename, fps_source='fps')
+        clip2 = VideoFileClip(video02_filename, fps_source='fps')
+        clip3 = VideoFileClip(video03_filename, fps_source='fps')
+
+        new_clip1 = clip1.resize((536, 1080))
+        new_clip2 = clip2.resize((536, 1080))
+        new_clip3 = clip3.resize((536, 1080))
+
+        if delay01 > 0:
+            black_video01 = black_video.subclip('00:00:00.000', milli_to_timecode(delay01))
+            new_clip1 = concatenate_videoclips([black_video01.resize((536, 1080)), clip1.resize((536, 1080))])
+            if volume01 != 1:
+                new_clip1 = new_clip1.volumex(volume01)
+
+        if delay02 > 0:
+            black_video02 = black_video.subclip('00:00:00.000', milli_to_timecode(delay02))
+            new_clip2 = concatenate_videoclips([black_video02.resize((536, 1080)), clip2.resize((536, 1080))])
+            if volume02 != 1:
+                new_clip2 = new_clip2.volumex(volume02)
+
+        if delay03 > 0:
+            black_video03 = black_video.subclip('00:00:00.000', milli_to_timecode(delay03))
+            new_clip3 = concatenate_videoclips([black_video03.resize((536, 1080)), clip3.resize((536, 1080))])
+            if volume03 != 1:
+                new_clip3 = new_clip3.volumex(volume03)
+
+        final_clip = CompositeVideoClip(
+            [new_clip1.set_position((152, 0)), new_clip2.set_position((688, 0)),
+             new_clip3.set_position((1224, 0))],
+            size=(1920, 1080))
+
+    if layout_name == '4_01':
+        print(f'Start merge full video 4_01')
+
+        clip1 = VideoFileClip(video01_filename, fps_source='fps')
+        clip2 = VideoFileClip(video02_filename, fps_source='fps')
+        clip3 = VideoFileClip(video03_filename, fps_source='fps')
+        clip4 = VideoFileClip(video04_filename, fps_source='fps')
+
+        new_clip1 = clip1.resize((960, 540))
+        new_clip2 = clip2.resize((960, 540))
+        new_clip3 = clip3.resize((960, 540))
+        new_clip4 = clip4.resize((960, 540))
+
+        if delay01 > 0:
+            black_video01 = black_video.subclip('00:00:00.000', milli_to_timecode(delay01))
+            new_clip1 = concatenate_videoclips([black_video01, clip1.resize((960, 540))])
+            if volume01 != 1:
+                new_clip1 = new_clip1.volumex(volume01)
+
+        if delay02 > 0:
+            black_video02 = black_video.subclip('00:00:00.000', milli_to_timecode(delay02))
+            new_clip2 = concatenate_videoclips([black_video02, clip2.resize((960, 540))])
+            if volume02 != 1:
+                new_clip2 = new_clip2.volumex(volume02)
+
+        if delay03 > 0:
+            black_video03 = black_video.subclip('00:00:00.000', milli_to_timecode(delay03))
+            new_clip3 = concatenate_videoclips([black_video03, clip3.resize((960, 540))])
+            if volume03 != 1:
+                new_clip3 = new_clip3.volumex(volume03)
+
+        if delay04 > 0:
+            black_video04 = black_video.subclip('00:00:00.000', milli_to_timecode(delay04))
+            new_clip4 = concatenate_videoclips([black_video04, clip4.resize((960, 540))])
+            if volume04 != 1:
+                new_clip4 = new_clip4.volumex(volume04)
+
+        final_clip = clips_array([[new_clip1.volumex(volume01), new_clip2.volumex(volume02)],
+                                  [new_clip3.volumex(volume03), new_clip4.volumex(volume04)]])
+
+
     if layout_name in layout_list:
     # datetime object containing current date and time
         now = datetime.now()
@@ -577,7 +801,7 @@ def create_seewav(input_filename, output_filename):
 if __name__ == '__main__':
     #create_seewav("in05.mp4","out05.mp4")
     #merge_full('2_06', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
-    #merge_full('2_06', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 0, 0, 1.0, 1.0, 'omiejung')
+    merge_full('2_07', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', '', '', 0, 0, 0, 0, 1.0, 1.0, 1.0, 1.0, 'omiejung')
 
     #merge_full('2_04', 'C:\\media\\mp4\\Jazz-02-Drum.mp4', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4',
     #           0, 2168,
@@ -588,7 +812,7 @@ if __name__ == '__main__':
     #           1.0, 1.0,
     #           'omiejung')
 
-    merge_full('2_05', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
+    #merge_full('2_05', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
 
     #mix_sound('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone-P.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4' , 0, 0, 1.0, 1.0, 'omiejung')
     print('Ad Astra Abyssosque')
