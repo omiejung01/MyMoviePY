@@ -495,24 +495,25 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         clip1 = VideoFileClip(video01_filename, fps_source='fps')
         clip2 = VideoFileClip(video02_filename, fps_source='fps')
 
-        Image205Top = ImageClip(image_2_05_top_filename)
-        Image205Top = Image205Top.with_start(0).with_duration(clip1.duration)
+        Image205Left = ImageClip(image_2_08_left_filename)
+        Image205Left= Image205Left.with_start(0).with_duration(clip1.duration)
 
         # Position the image clip in the center of the screen
-        Image205Top = Image205Top.with_effects([mp.video.fx.Resize((100, 100))]).with_position((20, 20))
+        Image205Left = Image205Left.with_effects([mp.video.fx.Resize((100, 100))]).with_position((20, 20))
 
-        Image205Bottom = ImageClip(image_2_05_bottom_filename)
-        Image205Bottom = Image205Bottom.with_start(0).with_duration(clip2.duration)
+        Image205Right = ImageClip(image_2_08_right_filename)
+        Image205Right = Image205Right.with_start(0).with_duration(clip2.duration)
 
         # Position the image clip in the center of the screen
-        Image205Bottom = Image205Bottom.with_effects([mp.video.fx.Resize((100, 100))]).with_position((20, 20))
+        Image205Right = Image205Right.with_effects([mp.video.fx.Resize((100, 100))]).with_position((20, 20))
+
         # Combine the video and the image overlay into a single clip
 
         # x 950
         # y 530
 
-        new_clip1 = clip1.with_effects([mp.video.fx.Resize((950, 530))])
-        new_clip2 = clip2.with_effects([mp.video.fx.Resize((950, 535))])
+        new_clip1 = clip1.with_effects([mp.video.fx.Resize((602, 1070))])
+        new_clip2 = clip2.with_effects([mp.video.fx.Resize((602, 1070))])
         # new_clip2 = clip2.resize((1184, 664))
 
         if delay01 > 0:
@@ -523,7 +524,7 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
             if volume01 != 1:
                 new_clip1 = new_clip1.volumex(volume01)
 
-        new_clip1 = mp.video.fx.Margin(top=5, left=5, right=5, color=(255, 255, 0)).add_margin(new_clip1)
+        new_clip1 = mp.video.fx.Margin(top=5, left=5, bottom=5, color=(255, 255, 0)).add_margin(new_clip1)
 
         if delay02 > 0:
             black_video02 = black_video.subclipped('00:00:00.000', milli_to_timecode(delay02))
@@ -539,35 +540,35 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
 
         wav01_clip = VideoFileClip(wave01, fps_source='fps')
         wav01_clip2 = wav01_clip.with_volume_scaled(0.0)
-        wav01_clip3 = wav01_clip2.with_effects([mp.video.fx.Resize((955, 355))])
+        wav01_clip3 = wav01_clip2.with_effects([mp.video.fx.Resize((696, 355))])
         wav01_clip4 = mp.video.fx.Margin(top=5, right=5, color=(255, 255, 0)).add_margin(wav01_clip3)
 
-        wav01_clip4 = CompositeVideoClip([wav01_clip4, Image205Top])
+        wav01_clip4 = CompositeVideoClip([wav01_clip4, Image205Left])
 
         wave02 = gen_sound(video02_filename, volume02, owner_name)
 
         wav02_clip = VideoFileClip(wave02, fps_source='fps')
         wav02_clip2 = wav02_clip.with_volume_scaled(0.0)
-        wav02_clip3 = wav02_clip2.with_effects([mp.video.fx.Resize((955, 355))])
+        wav02_clip3 = wav02_clip2.with_effects([mp.video.fx.Resize((696, 355))])
         wav02_clip4 = mp.video.fx.Margin(top=5, right=5, color=(255, 255, 0)).add_margin(wav02_clip3)
 
-        wav02_clip4 = CompositeVideoClip([wav02_clip4, Image205Bottom])
+        wav02_clip4 = CompositeVideoClip([wav02_clip4, Image205Right])
 
         wave_file = mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02,
                               owner_name)
 
         final_wav_clip = VideoFileClip(wave_file, fps_source='fps')
         final_wav_clip2 = final_wav_clip.with_volume_scaled(0.0)
-        final_wav_clip3 = final_wav_clip2.with_effects([mp.video.fx.Resize((955, 350))])
+        final_wav_clip3 = final_wav_clip2.with_effects([mp.video.fx.Resize((696, 350))])
         final_wav_clip4 = mp.video.fx.Margin(top=5, bottom=5, right=5, color=(255, 255, 0)).add_margin(final_wav_clip3)
 
         # final_clip = CompositeVideoClip([new_clip1.with_position((0,0)), new_clip2.with_position((613, 0)), wav_clip4.with_position((613,743))],
         #                                size=(1920, 1080))
 
         # 5 + 355 + 5 + 355 + 5 + 350 + 5
-        final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)), new_clip2.with_position((0, 535)),
-                                         wav01_clip4.with_position((960, 0)), wav02_clip4.with_position((960, 360)),
-                                         final_wav_clip4.with_position((960, 720))],
+        final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)), new_clip2.with_position((0, 607)),
+                                         wav01_clip4.with_position((1219, 0)), wav02_clip4.with_position((1219, 360)),
+                                         final_wav_clip4.with_position((1219, 720))],
                                         size=(1920, 1080))
 
 
