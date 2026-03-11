@@ -37,9 +37,9 @@ def gen_sound(video01_filename, volume01, owner_name):
 
     filename = str(owner_name + '_' + dt_string)
 
-    video_filename = filename + "_108.mp4"
-    sound_filename = filename + "_108.mp3"
-    wave_filename = filename + "_wave.mp4"
+    video_filename = "temp\\" + filename + "_108.mp4"
+    sound_filename = "temp\\" + filename + "_108.mp3"
+    wave_filename = "temp\\" + filename + "_wave.mp4"
 
     # final_clip.write_videofile(sound_filename, codec='mp3')
     final_clip.write_videofile(video_filename)
@@ -87,9 +87,9 @@ def mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02,
 
     filename = str(owner_name + '_' + dt_string)
 
-    video_filename = filename + "_108.mp4"
-    sound_filename = filename + "_108.mp3"
-    wave_filename = filename + "_wave.mp4"
+    video_filename = "temp\\" + filename + "_108.mp4"
+    sound_filename = "temp\\" + filename + "_108.mp3"
+    wave_filename = "temp\\" + filename + "_wave.mp4"
 
     #final_clip.write_videofile(sound_filename, codec='mp3')
     final_clip.write_videofile(video_filename)
@@ -346,7 +346,7 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         # y 530
 
         new_clip1 = clip1.with_effects([mp.video.fx.Resize((950, 530))])
-        new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
+        new_clip1 = mp.video.fx.Margin(top=5, left=5, right=5, color=(255, 255, 0)).add_margin(new_clip1)
 
         new_clip2 = clip2.with_effects([mp.video.fx.Resize((950, 530))])
         #new_clip2 = clip2.resize((1184, 664))
@@ -431,10 +431,13 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
 
         # 5 + 355 + 5 + 355 + 5 + 350 + 5
         #final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01)), new_clip2.with_position((0, 535)).with_start(milli_to_timecode(delay02)),
-        final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)),
-                                         new_clip2.with_position((0, 540)).with_start(milli_to_timecode(delay02)),
+        final_clip = CompositeVideoClip([
+                                         #new_clip1.with_position((0, 0)),
+                                         new_clip2.with_position((0, 530)).with_start(milli_to_timecode(delay02)),
                                          wav01_clip4.with_position((960, 0)), wav02_clip4.with_position((960, 360)),
-                                         final_wav_clip4.with_position((960, 720))],
+                                         final_wav_clip4.with_position((960, 720)),
+                                         new_clip1.with_position((0, 0))
+                                         ],
                                         size=(1920, 1080))
 
     if layout_name == '2_06':
@@ -715,7 +718,7 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
 
         filename = str(owner_name + '_' + dt_string)
 
-        final_filename = filename + ".mp4"
+        final_filename = "finished\\" + filename + ".mp4"
             # final_clip.subclip('00:00:00.000', '00:00:10.000').resize(width=1920).write_videofile(final_filename)
 
             # final_clip.resize(width=1920).write_videofile(final_filename)
@@ -807,7 +810,7 @@ if __name__ == '__main__':
     #           0, 2168,
     #           1.0, 1.0,
     #           'omiejung')
-    #merge_full('2_01', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 'C:\\media\\mp4\\Jazz-02-Drum.mp4', '', '',
+    #merge_full('2_04', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 'C:\\media\\mp4\\Jazz-02-Drum.mp4', '', '',
     #           2168, 0, 0, 0,
     #           1.0, 1.0, 1.0, 1.0,
     #           'omiejung')
@@ -815,6 +818,8 @@ if __name__ == '__main__':
     merge_full('2_05', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4', 'C:\\media\\mp4\\Jazz-02-Drum.mp4', '', '',
                 2168, 0, 0, 0,
                 1.0, 1.0, 1.0, 1.0,'omiejung')
+                # on progress
+
     #merge_full('2_05', 'C:\\media\\mp4\\Jazz-03-Saxophone.mp4', 'C:\\media\\mp4\\Jazz-04-DoubleBass.mp4', '', '',
     #            0, 0, 0, 0,
     #            1.0, 1.0, 1.0, 1.0,'omiejung')
