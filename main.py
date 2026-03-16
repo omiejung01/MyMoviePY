@@ -8,12 +8,17 @@ layout_list = ['2_01', '2_02', '2_03', '2_04', '2_05', '2_06', '2_07', '2_08',
 http_finished_location = ''
 
 #local Mac OS
-finished_location = '/Users/dhirachat/temp/finished/'
-working_location = '/Users/dhirachat/temp/working/'
+#finished_location = '/Users/dhirachat/temp/finished/'
+#working_location = '/Users/dhirachat/temp/working/'
 
-app_media_location = '/Users/dhirachat/media/mp4/'
-app_images_location = '/Users/dhirachat/media/images/'
+#app_media_location = '/Users/dhirachat/media/mp4/'
+#app_images_location = '/Users/dhirachat/media/images/'
 
+finished_location = 'finished\\'
+working_location = 'working\\'
+
+app_media_location = 'C:\\media\\mp4\\'
+app_images_location = 'C:\\media\\images\\'
 
 def AlphaVideo():
     canvas_size = (1920, 1080)
