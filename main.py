@@ -906,11 +906,11 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         final_clip.with_effects([mp.video.fx.Resize(width=1920)])
         final_clip2 = concatenate_videoclips([final_clip, outtro_video])
 
-        final_clip2.subclipped(0, 11).write_videofile(final_filename, audio=True, audio_codec='aac')
+        #final_clip2.subclipped(0, 11).write_videofile(final_filename, audio=True, audio_codec='aac')
 
         #final_clip2.subclipped(max(0, final_clip2.duration - 15), final_clip2.duration).write_videofile(final_filename, audio=True, audio_codec='aac')
 
-        #final_clip2.write_videofile(final_filename, audio=True, audio_codec='aac')
+        final_clip2.write_videofile(final_filename, audio=True, audio_codec='aac')
         final_clip.close()
         final_clip2.close()
 
@@ -993,15 +993,15 @@ if __name__ == '__main__':
     #           1.0, 1.0, 1.0, 1.0,
     #           'omiejung')
 
-    merge_full('2_06', app_media_location +  'Jazz-02-Drum-P.mp4', app_media_location + 'Jazz-03-Saxophone.mp4' , '', '',
-               0, 2168, 0, 0,
-               1.0, 1.0, 1.0, 1.0,
-               'omiejung')
-
-    #merge_full('2_07', app_media_location +  'Jazz-03-Saxophone.mp4', app_media_location + 'Jazz-02-Drum-P.mp4', '', '',
-    #           2168, 0, 0, 0,
+    #merge_full('2_06', app_media_location +  'Jazz-02-Drum-P.mp4', app_media_location + 'Jazz-03-Saxophone.mp4' , '', '',
+    #           0, 2168, 0, 0,
     #           1.0, 1.0, 1.0, 1.0,
     #           'omiejung')
+
+    merge_full('2_07', app_media_location +  'Jazz-03-Saxophone.mp4', app_media_location + 'Jazz-02-Drum-P.mp4', '', '',
+               2168, 0, 0, 0,
+               1.0, 1.0, 1.0, 1.0,
+               'omiejung')
 
     #merge_full('2_08', app_media_location + 'Jazz-03-Saxophone-P.mp4', app_media_location + 'Jazz-02-Drum-P.mp4', '', '',
     #           2168, 0, 0, 0,
