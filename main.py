@@ -343,6 +343,7 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
 
         clip1 = VideoFileClip(video01_filename, fps_source='fps')
         clip2 = VideoFileClip(video02_filename, fps_source='fps')
+        #print('clip1-01 length: ' + str(clip1.duration) + " seconds")
 
         total_duration01 = (clip1.duration * 1000) + delay01  # millisecond
         total_duration02 = (clip2.duration * 1000) + delay02  # millisecond
@@ -364,6 +365,7 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
 
         new_clip1 = clip1.with_effects([mp.video.fx.Resize((950, 540))])
         new_clip1 = mp.video.fx.Margin(top=5, left=5, right=5, color=(255, 255, 0)).add_margin(new_clip1)
+        #print('clip1-02 length: ' + str(new_clip1.duration) + " seconds")
 
         black_video01 = ColorClip(size=(950, 540), color=(0, 0, 0), duration=total_duration01)
         black_video01 = mp.video.fx.Margin(top=5, left=5, right=5, color=(255, 255, 0)).add_margin(black_video01)
@@ -375,7 +377,7 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
                                         new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01))],
                                        size=(960, 540))
         new_clip1 = new_clip1.with_volume_scaled(volume01)
-        print('clip1 length: ' + str(new_clip1.duration) + " seconds")
+        #print('clip1-03 length: ' + str(new_clip1.duration) + " seconds")
 
         #if delay01 > 0:
             #black_video01 = ColorClip(size=(950, 540), color=(0, 0, 0), duration=total_duration01)
@@ -423,7 +425,7 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
                                        size=(960, 540))
 
         new_clip2 = new_clip2.with_volume_scaled(volume02)
-        print('clip2 length: ' + str(new_clip2.duration) + " seconds")
+        #print('clip2 length: ' + str(new_clip2.duration) + " seconds")
 
 
         #if delay02 > 0:
@@ -468,7 +470,7 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
                                           wav01_clip4.with_position((0, 0)).with_start(milli_to_timecode(delay01))],
                                          size=(960, 360))
 
-        print('wav01 length: ' + str(wav01_clip4.duration) + " seconds")
+        #print('wav01 length: ' + str(wav01_clip4.duration) + " seconds")
 
         #delay
         #if delay01 > 0:
@@ -514,7 +516,7 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
                                                 wav02_clip4.with_position((0, 0)).with_start(milli_to_timecode(delay02))],
                                                size=(960, 360))
 
-        print('wav02 length: ' + str(wav02_clip4.duration) + " seconds")
+        #print('wav02 length: ' + str(wav02_clip4.duration) + " seconds")
 
         wave_file = mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02, owner_name)
 
@@ -523,7 +525,7 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         final_wav_clip3 = final_wav_clip2.with_effects([mp.video.fx.Resize((955, 350))])
         final_wav_clip4 = mp.video.fx.Margin(top=5, bottom=5, right=5, color=(255, 255, 0)).add_margin(final_wav_clip3)
 
-        print('final wav length: ' + str(final_wav_clip4.duration) + " seconds")
+        #print('final wav length: ' + str(final_wav_clip4.duration) + " seconds")
         #final_clip = CompositeVideoClip([new_clip1.with_position((0,0)), new_clip2.with_position((613, 0)), wav_clip4.with_position((613,743))],
         #                                size=(1920, 1080))
 
@@ -538,8 +540,9 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
                                          new_clip2.with_position((0, 540))
                                          ],
                                         size=(1920, 1080))
+        # compositevideo did not correctly calculate 'duration'. Use the duration from wav file.
         final_clip = final_clip.subclipped(0, final_wav_clip4.duration)
-        print('final_clip length: ' + str(final_clip.duration) + " seconds")
+        #print('final_clip length: ' + str(final_clip.duration) + " seconds")
 
 
     if layout_name == '2_06':
@@ -554,25 +557,35 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         #new_clip2 = clip2.resize((1184, 664))
 
         new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
-        if delay01 > 0:
-            black_video01 = ColorClip(size=(603, 1070), color=(0, 0, 0), duration=total_duration01)
-            black_video01 = mp.video.fx.Margin(top=5, left=5, right =5, color=(255, 255, 0)).add_margin(black_video01)
 
-            if total_duration01 >= total_duration02:
-                new_clip1 = mp.video.fx.FadeIn(2).apply(new_clip1)
-                new_clip1 = mp.video.fx.FadeOut(2).apply(new_clip1)
-                print('A')
-            else:
-                print('B')
-                new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
-                new_clip1 = mp.video.fx.CrossFadeOut(2).apply(new_clip1)
-                new_clip1 = CompositeVideoClip([black_video01.with_position((0, 0)),
-                            new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01))],
-                            size=(603, 1070))
+        black_video01 = ColorClip(size=(603, 1070), color=(0, 0, 0), duration=total_duration01)
+        black_video01 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(black_video01)
 
-        else:
-            new_clip1 = mp.video.fx.FadeIn(2).apply(new_clip1)
-            new_clip1 = mp.video.fx.FadeOut(2).apply(new_clip1)
+        new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
+        new_clip1 = mp.video.fx.CrossFadeOut(2).apply(new_clip1)
+        new_clip1 = CompositeVideoClip([black_video01.with_position((0, 0)),
+                                        new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01))],
+                                       size=(613, 1080))
+
+        #if delay01 > 0:
+        #    black_video01 = ColorClip(size=(603, 1070), color=(0, 0, 0), duration=total_duration01)
+        #    black_video01 = mp.video.fx.Margin(top=5, left=5, right =5, color=(255, 255, 0)).add_margin(black_video01)
+
+        #    if total_duration01 >= total_duration02:
+        #        new_clip1 = mp.video.fx.FadeIn(2).apply(new_clip1)
+        #        new_clip1 = mp.video.fx.FadeOut(2).apply(new_clip1)
+        #        print('A')
+        #    else:
+        #        print('B')
+        #        new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
+        #        new_clip1 = mp.video.fx.CrossFadeOut(2).apply(new_clip1)
+        #        new_clip1 = CompositeVideoClip([black_video01.with_position((0, 0)),
+        #                    new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01))],
+        #                    size=(603, 1070))
+
+        #else:
+        #    new_clip1 = mp.video.fx.FadeIn(2).apply(new_clip1)
+        #    new_clip1 = mp.video.fx.FadeOut(2).apply(new_clip1)
             #if total_duration01 >= total_duration02:
             #    print('C')
             #    new_clip1 = mp.video.fx.FadeIn(2).apply(new_clip1)
@@ -595,8 +608,16 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         new_clip1 = new_clip1.with_volume_scaled(volume01)
 
         #new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
+        black_video02 = ColorClip(size=(1302, 733), color=(0, 0, 0), duration=total_duration02)
+        black_video02 = mp.video.fx.Margin(top=5, right=5, bottom = 5, color=(255, 255, 0)).add_margin(black_video02)
 
         new_clip2 = mp.video.fx.Margin(top=5, right=5, bottom=5, color=(255, 255, 0)).add_margin(new_clip2)
+
+        new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
+        new_clip2 = mp.video.fx.CrossFadeOut(2).apply(new_clip2)
+        new_clip2 = CompositeVideoClip([black_video02.with_position((0, 0)),
+                                        new_clip2.with_position((0, 0)).with_start(milli_to_timecode(delay02))],
+                                       size=(1307, 743))
 
         #if delay02 > 0:
         #    black_video02 = ColorClip(size=(1302, 733), color=(0, 0, 0), duration=total_duration02)
@@ -617,6 +638,9 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
 
         final_clip = CompositeVideoClip([new_clip1.with_position((0,0)), new_clip2.with_position((613, 0)), wav_clip4.with_position((613,743))],
                                         size=(1920, 1080))
+        # use wav duration
+        final_clip = final_clip.subclipped(0, wav_clip4.duration)
+
 
     if layout_name == '2_07':
         clip1 = VideoFileClip(video01_filename, fps_source='fps')
@@ -882,10 +906,11 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         final_clip.with_effects([mp.video.fx.Resize(width=1920)])
         final_clip2 = concatenate_videoclips([final_clip, outtro_video])
 
-        #final_clip2.subclipped(0, 11).write_videofile(final_filename, audio=True, audio_codec='aac')
+        final_clip2.subclipped(0, 11).write_videofile(final_filename, audio=True, audio_codec='aac')
 
         #final_clip2.subclipped(max(0, final_clip2.duration - 15), final_clip2.duration).write_videofile(final_filename, audio=True, audio_codec='aac')
-        final_clip2.write_videofile(final_filename, audio=True, audio_codec='aac')
+
+        #final_clip2.write_videofile(final_filename, audio=True, audio_codec='aac')
         final_clip.close()
         final_clip2.close()
 
@@ -958,20 +983,20 @@ if __name__ == '__main__':
     #           'omiejung')
 
     #1
-    merge_full('2_05', app_media_location +  'Jazz-03-Saxophone.mp4', app_media_location + 'Jazz-02-Drum.mp4', '', '',
-                2168, 0, 0, 0,
-                1.0, 1.0, 1.0, 1.0,
-                'omiejung')
+    #merge_full('2_05', app_media_location +  'Jazz-03-Saxophone.mp4', app_media_location + 'Jazz-02-Drum.mp4', '', '',
+    #            2168, 0, 0, 0,
+    #            1.0, 1.0, 1.0, 1.0,
+    #            'omiejung')
     #2
     #merge_full('2_05', app_media_location + 'Jazz-02-Drum.mp4', app_media_location + 'Jazz-03-Saxophone.mp4', '', '',
     #           0, 2168, 0, 0,
     #           1.0, 1.0, 1.0, 1.0,
     #           'omiejung')
 
-    #merge_full('2_06', app_media_location +  'Jazz-03-Saxophone-P.mp4', app_media_location + 'Jazz-02-Drum.mp4', '', '',
-    #           2168, 0, 0, 0,
-    #           1.0, 1.0, 1.0, 1.0,
-    #           'omiejung')
+    merge_full('2_06', app_media_location +  'Jazz-02-Drum-P.mp4', app_media_location + 'Jazz-03-Saxophone.mp4' , '', '',
+               0, 2168, 0, 0,
+               1.0, 1.0, 1.0, 1.0,
+               'omiejung')
 
     #merge_full('2_07', app_media_location +  'Jazz-03-Saxophone.mp4', app_media_location + 'Jazz-02-Drum-P.mp4', '', '',
     #           2168, 0, 0, 0,
