@@ -840,10 +840,6 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         clip2 = VideoFileClip(video02_filename, fps_source='fps')
         clip3 = VideoFileClip(video03_filename, fps_source='fps')
 
-        #new_clip1 = clip1.resize((950, 535))
-        #new_clip2 = clip2.resize((955, 535))
-        #new_clip3 = clip3.resize((950, 530))
-
         image_3_03_top_left_filename = app_images_location + '3_03_top_left.png'
         image_3_03_top_right_filename = app_images_location + '3_03_top_right.png'
         image_3_03_bottom_left_filename = app_images_location + '3_03_bottom_left.png'
@@ -866,21 +862,12 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         Image303BottomLeft = Image303BottomLeft.with_start(0).with_duration(clip3.duration)
         Image303BottomLeft = Image303BottomLeft.with_effects([mp.video.fx.Resize((160, 90))]).with_position((20, 20))
 
-        #Image205Bottom = ImageClip(image_2_05_bottom_filename)
-        #Image205Bottom = Image205Bottom.with_start(0).with_duration(clip2.duration)
-
-        # Position the image clip in the center of the screen
-        #Image205Bottom = Image205Bottom.with_effects([mp.video.fx.Resize((100, 100))]).with_position((20, 20))
-        # Combine the video and the image overlay into a single clip
-        # x 950
-        # y 530
-
         new_clip1 = clip1.with_effects([mp.video.fx.Resize((950, 535))])
         new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
         # print('clip1-02 length: ' + str(new_clip1.duration) + " seconds")
 
         black_video01 = ColorClip(size=(950, 535), color=(0, 0, 0), duration=clip_duration)
-        black_video01 = mp.video.fx.Margin(5,  color=(255, 255, 0)).add_margin(black_video01)
+        black_video01 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(black_video01)
 
         new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
         new_clip1 = mp.video.fx.CrossFadeOut(2).apply(new_clip1)
@@ -891,10 +878,10 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
 
         # print('clip1-03 length: ' + str(new_clip1.duration) + " seconds")
         new_clip2 = clip2.with_effects([mp.video.fx.Resize((955, 535))])
-        new_clip2 = mp.video.fx.Margin(top = 5, right = 5, bottom = 5, color=(255, 255, 0)).add_margin(new_clip2)
+        new_clip2 = mp.video.fx.Margin(top=5, right=5, bottom=5, color=(255, 255, 0)).add_margin(new_clip2)
 
         black_video02 = ColorClip(size=(955, 535), color=(0, 0, 0), duration=clip_duration)
-        black_video02 = mp.video.fx.Margin(top = 5, right = 5, bottom = 5, color=(255, 255, 0)).add_margin(black_video02)
+        black_video02 = mp.video.fx.Margin(top=5, right=5, bottom=5, color=(255, 255, 0)).add_margin(black_video02)
 
         new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
         new_clip2 = mp.video.fx.CrossFadeOut(2).apply(new_clip2)
@@ -904,10 +891,10 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         new_clip2 = new_clip2.with_volume_scaled(volume02)
 
         new_clip3 = clip3.with_effects([mp.video.fx.Resize((950, 530))])
-        new_clip3 = mp.video.fx.Margin(left = 5, right = 5, bottom = 5, color=(255, 255, 0)).add_margin(new_clip3)
+        new_clip3 = mp.video.fx.Margin(left=5, right=5, bottom=5, color=(255, 255, 0)).add_margin(new_clip3)
 
         black_video03 = ColorClip(size=(950, 530), color=(0, 0, 0), duration=clip_duration)
-        black_video03 = mp.video.fx.Margin(left = 5, right =5, bottom = 5, color=(255, 255, 0)).add_margin(black_video03)
+        black_video03 = mp.video.fx.Margin(left=5, right=5, bottom=5, color=(255, 255, 0)).add_margin(black_video03)
 
         new_clip3 = mp.video.fx.CrossFadeIn(2).apply(new_clip3)
         new_clip3 = mp.video.fx.CrossFadeOut(2).apply(new_clip3)
@@ -915,7 +902,6 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
                                         new_clip3.with_position((0, 0)).with_start(milli_to_timecode(delay03))],
                                        size=(960, 535))
         new_clip3 = new_clip3.with_volume_scaled(volume03)
-
 
         wave01 = gen_sound(video01_filename, volume01, owner_name)
 
@@ -972,24 +958,6 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
                                           wav03_clip4.with_position((0, 0)).with_start(milli_to_timecode(delay03))],
                                          size=(310, 275))
 
-        # if delay02 > 0:
-        #    black_video_wave02 = ColorClip(size=(955, 355), color=(0, 0, 0), duration=total_duration02)
-        #    black_video_wave02 = mp.video.fx.Margin(top=5, right=5, color=(255, 255, 0)).add_margin(black_video_wave02)
-
-        #    if total_duration02 >= total_duration01:
-        #        wav02_clip4 = mp.video.fx.FadeIn(2).apply(wav02_clip4)
-        #        wav02_clip4 = mp.video.fx.FadeOut(2).apply(wav02_clip4)
-        #        print('E')
-        #    else:
-        #        print('F')
-        #        wav02_clip4 = mp.video.fx.CrossFadeIn(2).apply(wav02_clip4)
-        #        wav02_clip4 = mp.video.fx.CrossFadeOut(2).apply(wav02_clip4)
-        #        wav02_clip4 = CompositeVideoClip([black_video_wave02.with_position((0, 0)),
-        #                                        wav02_clip4.with_position((0, 0)).with_start(milli_to_timecode(delay02))],
-        #                                       size=(960, 360))
-
-        # print('wav02 length: ' + str(wav02_clip4.duration) + " seconds")
-
         wave_file = mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02,
                               owner_name)
 
@@ -998,16 +966,10 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         final_wav_clip3 = final_wav_clip2.with_effects([mp.video.fx.Resize((955, 255))])
         final_wav_clip4 = mp.video.fx.Margin(bottom=5, right=5, color=(255, 255, 0)).add_margin(final_wav_clip3)
 
-        # print('final wav length: ' + str(final_wav_clip4.duration) + " seconds")
-        # final_clip = CompositeVideoClip([new_clip1.with_position((0,0)), new_clip2.with_position((613, 0)), wav_clip4.with_position((613,743))],
-        #                                size=(1920, 1080))
-
-        # 5 + 355 + 5 + 355 + 5 + 350 + 5
-        # final_clip = CompositeVideoClip([new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01)), new_clip2.with_position((0, 535)).with_start(milli_to_timecode(delay02)),
         final_clip = CompositeVideoClip([
             # new_clip1.with_position((0, 0)),
             wav01_clip4.with_position((960, 545)),
-            wav02_clip4.with_position((1285 , 545)),
+            wav02_clip4.with_position((1285, 545)),
             wav03_clip4.with_position((1610, 545)),
             final_wav_clip4.with_position((960, 820)),
 
@@ -1015,11 +977,153 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
             new_clip2.with_position((960, 0)),
             new_clip3.with_position((0, 545))
 
-        ],
-            size=(1920, 1080))
-        # compositevideo did not correctly calculate 'duration'. Use the duration from wav file.
-        # final_clip = final_clip.subclipped(0, final_wav_clip4.duration)
-        # print('final_clip length: ' + str(final_clip.duration) + " seconds")
+        ], size=(1920, 1080))
+
+
+    if layout_name == '3_04':
+        clip1 = VideoFileClip(video01_filename, fps_source='fps')
+        clip2 = VideoFileClip(video02_filename, fps_source='fps')
+        clip3 = VideoFileClip(video03_filename, fps_source='fps')
+
+        image_3_04_left_filename = app_images_location + '3_04_left.png'
+        image_3_04_top_right_filename = app_images_location + '3_04_top_right.png'
+        image_3_04_bottom_right_filename = app_images_location + '3_04_bottom_right.png'
+
+
+        total_duration01 = (clip1.duration * 1000) + delay01  # millisecond
+        total_duration02 = (clip2.duration * 1000) + delay02  # millisecond
+        total_duration03 = (clip3.duration * 1000) + delay03  # millisecond
+
+        clip_duration = max(total_duration01, total_duration02, total_duration03) / 1000.0
+
+        Image304Left = ImageClip(image_3_04_left_filename)
+        Image304Left = Image304Left.with_start(0).with_duration(clip1.duration)
+        Image304Left = Image304Left.with_effects([mp.video.fx.Resize((100, 65))]).with_position((20, 20))
+
+        Image304TopRight = ImageClip(image_3_04_top_right_filename)
+        Image304TopRight = Image304TopRight.with_start(0).with_duration(clip2.duration)
+        Image304TopRight = Image304TopRight.with_effects([mp.video.fx.Resize((100, 65))]).with_position((20, 20))
+
+        Image304BottomRight = ImageClip(image_3_04_bottom_right_filename)
+        Image304BottomRight = Image304BottomRight.with_start(0).with_duration(clip3.duration)
+        Image304BottomRight = Image304BottomRight.with_effects([mp.video.fx.Resize((100, 65))]).with_position((20, 20))
+
+        new_clip1 = clip1.with_effects([mp.video.fx.Resize((601, 1070))])
+        new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
+        # print('clip1-02 length: ' + str(new_clip1.duration) + " seconds")
+
+        black_video01 = ColorClip(size=(601, 1070), color=(0, 0, 0), duration=clip_duration)
+        black_video01 = mp.video.fx.Margin(5,  color=(255, 255, 0)).add_margin(black_video01)
+
+        new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
+        new_clip1 = mp.video.fx.CrossFadeOut(2).apply(new_clip1)
+        new_clip1 = CompositeVideoClip([black_video01.with_position((0, 0)),
+                                        new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01))],
+                                       size=(611, 1080))
+        new_clip1 = new_clip1.with_volume_scaled(volume01)
+
+        # print('clip1-03 length: ' + str(new_clip1.duration) + " seconds")
+        new_clip2 = clip2.with_effects([mp.video.fx.Resize((945, 532))])
+        new_clip2 = mp.video.fx.Margin(top = 5, right = 5, bottom = 5, color=(255, 255, 0)).add_margin(new_clip2)
+
+        black_video02 = ColorClip(size=(945, 532), color=(0, 0, 0), duration=clip_duration)
+        black_video02 = mp.video.fx.Margin(top = 5, right = 5, bottom = 5, color=(255, 255, 0)).add_margin(black_video02)
+
+        new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
+        new_clip2 = mp.video.fx.CrossFadeOut(2).apply(new_clip2)
+        new_clip2 = CompositeVideoClip([black_video02.with_position((0, 0)),
+                                        new_clip2.with_position((0, 0)).with_start(milli_to_timecode(delay02))],
+                                       size=(950, 542))
+        new_clip2 = new_clip2.with_volume_scaled(volume02)
+
+        new_clip3 = clip3.with_effects([mp.video.fx.Resize((945, 533))])
+        new_clip3 = mp.video.fx.Margin(right = 5, bottom = 5, color=(255, 255, 0)).add_margin(new_clip3)
+
+        black_video03 = ColorClip(size=(945, 533), color=(0, 0, 0), duration=clip_duration)
+        black_video03 = mp.video.fx.Margin(right =5, bottom = 5, color=(255, 255, 0)).add_margin(black_video03)
+
+        new_clip3 = mp.video.fx.CrossFadeIn(2).apply(new_clip3)
+        new_clip3 = mp.video.fx.CrossFadeOut(2).apply(new_clip3)
+        new_clip3 = CompositeVideoClip([black_video03.with_position((0, 0)),
+                                        new_clip3.with_position((0, 0)).with_start(milli_to_timecode(delay03))],
+                                       size=(950, 538))
+        new_clip3 = new_clip3.with_volume_scaled(volume03)
+
+        wave01 = gen_sound(video01_filename, volume01, owner_name)
+
+        wav01_clip = VideoFileClip(wave01, fps_source='fps')
+        wav01_clip2 = wav01_clip.with_volume_scaled(0.0)
+
+        wav01_clip3 = wav01_clip2.with_effects([mp.video.fx.Resize((354, 264))])
+        wav01_clip4 = mp.video.fx.Margin(top = 5, bottom=5, right=5, color=(255, 255, 0)).add_margin(wav01_clip3)
+
+        wav01_clip4 = CompositeVideoClip([wav01_clip4, Image304Left])
+
+        black_video_wave01 = ColorClip(size=(354, 264), color=(0, 0, 0), duration=clip_duration)
+        black_video_wave01 = mp.video.fx.Margin(top = 5, bottom=5, right=5, color=(255, 255, 0)).add_margin(black_video_wave01)
+
+        wav01_clip4 = mp.video.fx.CrossFadeIn(2).apply(wav01_clip4)
+        wav01_clip4 = mp.video.fx.CrossFadeOut(2).apply(wav01_clip4)
+        wav01_clip4 = CompositeVideoClip([black_video_wave01.with_position((0, 0)),
+                                          wav01_clip4.with_position((0, 0)).with_start(milli_to_timecode(delay01))],
+                                         size=(364, 274))
+
+        wave02 = gen_sound(video02_filename, volume02, owner_name)
+
+        wav02_clip = VideoFileClip(wave02, fps_source='fps')
+        wav02_clip2 = wav02_clip.with_volume_scaled(0.0)
+        wav02_clip3 = wav02_clip2.with_effects([mp.video.fx.Resize((354, 264))])
+        wav02_clip4 = mp.video.fx.Margin(bottom=5, right=5, color=(255, 255, 0)).add_margin(wav02_clip3)
+
+        wav02_clip4 = CompositeVideoClip([wav02_clip4, Image304TopRight])
+
+        black_video_wave02 = ColorClip(size=(354, 264), color=(0, 0, 0), duration=clip_duration)
+        black_video_wave02 = mp.video.fx.Margin(bottom=5, right=5, color=(255, 255, 0)).add_margin(black_video_wave02)
+
+        wav02_clip4 = mp.video.fx.CrossFadeIn(2).apply(wav02_clip4)
+        wav02_clip4 = mp.video.fx.CrossFadeOut(2).apply(wav02_clip4)
+        wav02_clip4 = CompositeVideoClip([black_video_wave02.with_position((0, 0)),
+                                          wav02_clip4.with_position((0, 0)).with_start(milli_to_timecode(delay02))],
+                                         size=(359, 269))
+
+        wave03 = gen_sound(video03_filename, volume03, owner_name)
+
+        wav03_clip = VideoFileClip(wave03, fps_source='fps')
+        wav03_clip2 = wav03_clip.with_volume_scaled(0.0)
+        wav03_clip3 = wav03_clip2.with_effects([mp.video.fx.Resize((354, 264))])
+        wav03_clip4 = mp.video.fx.Margin(bottom=5, right=5, color=(255, 255, 0)).add_margin(wav03_clip3)
+
+        wav03_clip4 = CompositeVideoClip([wav03_clip4, Image304BottomRight])
+
+        black_video_wave03 = ColorClip(size=(354, 264), color=(0, 0, 0), duration=clip_duration)
+        black_video_wave03 = mp.video.fx.Margin(bottom=5, right=5, color=(255, 255, 0)).add_margin(black_video_wave03)
+
+        wav03_clip4 = mp.video.fx.CrossFadeIn(2).apply(wav03_clip4)
+        wav03_clip4 = mp.video.fx.CrossFadeOut(2).apply(wav03_clip4)
+        wav03_clip4 = CompositeVideoClip([black_video_wave03.with_position((0, 0)),
+                                          wav03_clip4.with_position((0, 0)).with_start(milli_to_timecode(delay03))],
+                                         size=(359, 269))
+
+        wave_file = mix_sound(layout_name, video01_filename, video02_filename, delay01, delay02, volume01, volume02,
+                              owner_name)
+
+        final_wav_clip = VideoFileClip(wave_file, fps_source='fps')
+        final_wav_clip2 = final_wav_clip.with_volume_scaled(0.0)
+        final_wav_clip3 = final_wav_clip2.with_effects([mp.video.fx.Resize((354, 263))])
+        final_wav_clip4 = mp.video.fx.Margin(bottom=5, right=5, color=(255, 255, 0)).add_margin(final_wav_clip3)
+
+        final_clip = CompositeVideoClip([
+            # new_clip1.with_position((0, 0)),
+            wav01_clip4.with_position((1561, 0)),
+            wav02_clip4.with_position((1561 , 274)),
+            wav03_clip4.with_position((1561, 543)),
+            final_wav_clip4.with_position((1561, 812)),
+
+            new_clip1.with_position((0, 0)),
+            new_clip2.with_position((611, 0)),
+            new_clip3.with_position((611, 542))
+
+        ],size=(1920, 1080))
 
     if layout_name == '3_07':
         clip1 = VideoFileClip(video01_filename, fps_source='fps')
@@ -1175,16 +1279,19 @@ if __name__ == '__main__':
     #merge_full('3_01',  app_media_location + 'Jazz-04-DoubleBass.mp4', app_media_location + 'Jazz-02-Drum.mp4', app_media_location + 'Jazz-01-Piano.mp4', '',
     #            2168, 0, 820, 0,
     #            1.0, 1.0, 1.0, 1.0,'omiejung')
-                # on progress
 
     #merge_full('3_02',  app_media_location + 'Jazz-04-DoubleBass.mp4', app_media_location + 'Jazz-02-Drum.mp4', app_media_location + 'Jazz-01-Piano.mp4', '',
     #            2168, 0, 820, 0,
     #            1.0, 1.0, 1.0, 1.0,'omiejung')
-                # on progress
 
-    merge_full('3_03', app_media_location + 'Jazz-04-DoubleBass.mp4', app_media_location + 'Jazz-02-Drum.mp4',
-               app_media_location + 'Jazz-01-Piano.mp4', '',
-               2168, 0, 820, 0,
+    #merge_full('3_03', app_media_location + 'Jazz-04-DoubleBass.mp4', app_media_location + 'Jazz-02-Drum.mp4',
+    #           app_media_location + 'Jazz-01-Piano.mp4', '',
+    #           2168, 0, 820, 0,
+    #           1.0, 1.0, 1.0, 1.0, 'omiejung')
+
+    merge_full('3_04', app_media_location + 'Jazz-02-Drum-P.mp4', app_media_location + 'Jazz-04-DoubleBass.mp4',
+               app_media_location + 'Jazz-03-Saxophone.mp4', '',
+               0, 2168, 2168, 0,
                1.0, 1.0, 1.0, 1.0, 'omiejung')
     # on progress
 
