@@ -958,19 +958,19 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
 
         wav03_clip = VideoFileClip(wave03, fps_source='fps')
         wav03_clip2 = wav03_clip.with_volume_scaled(0.0)
-        wav03_clip3 = wav03_clip2.with_effects([mp.video.fx.Resize((320, 270))])
+        wav03_clip3 = wav03_clip2.with_effects([mp.video.fx.Resize((305, 270))])
         wav03_clip4 = mp.video.fx.Margin(bottom=5, right=5, color=(255, 255, 0)).add_margin(wav03_clip3)
 
         wav03_clip4 = CompositeVideoClip([wav03_clip4, Image303BottomLeft])
 
-        black_video_wave03 = ColorClip(size=(320, 270), color=(0, 0, 0), duration=clip_duration)
+        black_video_wave03 = ColorClip(size=(305, 270), color=(0, 0, 0), duration=clip_duration)
         black_video_wave03 = mp.video.fx.Margin(bottom=5, right=5, color=(255, 255, 0)).add_margin(black_video_wave03)
 
         wav03_clip4 = mp.video.fx.CrossFadeIn(2).apply(wav03_clip4)
         wav03_clip4 = mp.video.fx.CrossFadeOut(2).apply(wav03_clip4)
         wav03_clip4 = CompositeVideoClip([black_video_wave03.with_position((0, 0)),
                                           wav03_clip4.with_position((0, 0)).with_start(milli_to_timecode(delay03))],
-                                         size=(325, 275))
+                                         size=(310, 275))
 
         # if delay02 > 0:
         #    black_video_wave02 = ColorClip(size=(955, 355), color=(0, 0, 0), duration=total_duration02)
@@ -995,8 +995,8 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
 
         final_wav_clip = VideoFileClip(wave_file, fps_source='fps')
         final_wav_clip2 = final_wav_clip.with_volume_scaled(0.0)
-        final_wav_clip3 = final_wav_clip2.with_effects([mp.video.fx.Resize((955, 350))])
-        final_wav_clip4 = mp.video.fx.Margin(top=5, bottom=5, right=5, color=(255, 255, 0)).add_margin(final_wav_clip3)
+        final_wav_clip3 = final_wav_clip2.with_effects([mp.video.fx.Resize((955, 255))])
+        final_wav_clip4 = mp.video.fx.Margin(bottom=5, right=5, color=(255, 255, 0)).add_margin(final_wav_clip3)
 
         # print('final wav length: ' + str(final_wav_clip4.duration) + " seconds")
         # final_clip = CompositeVideoClip([new_clip1.with_position((0,0)), new_clip2.with_position((613, 0)), wav_clip4.with_position((613,743))],
@@ -1009,8 +1009,8 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
             wav01_clip4.with_position((960, 545)),
             wav02_clip4.with_position((1285 , 545)),
             wav03_clip4.with_position((1610, 545)),
+            final_wav_clip4.with_position((960, 820)),
 
-            #final_wav_clip4.with_position((960, 720)),
             new_clip1.with_position((0, 0)),
             new_clip2.with_position((960, 0)),
             new_clip3.with_position((0, 545))
@@ -1062,9 +1062,9 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
         final_clip.with_effects([mp.video.fx.Resize(width=1920)])
         final_clip2 = concatenate_videoclips([final_clip, outtro_video])
 
-        final_clip2.subclipped(0, 11).write_videofile(final_filename, audio=True, audio_codec='aac')
+        #final_clip2.subclipped(0, 11).write_videofile(final_filename, audio=True, audio_codec='aac')
         #final_clip2.subclipped(max(0, final_clip2.duration - 15), final_clip2.duration).write_videofile(final_filename, audio=True, audio_codec='aac')
-        #final_clip2.write_videofile(final_filename, audio=True, audio_codec='aac')
+        final_clip2.write_videofile(final_filename, audio=True, audio_codec='aac')
         final_clip.close()
         final_clip2.close()
 
