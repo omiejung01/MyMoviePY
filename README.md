@@ -1,5 +1,5 @@
 # MyMoviePY
-This is for my MoviePY application, Mix 3 Music clips and generate sound wave, Layout 3-07 - finished.
+This is for my MoviePY application, Mix 3 Music clips and generate sound wave, Layout 4-01 - finished.
 
 # Requirements
 https://mac.install.guide/homebrew/3
