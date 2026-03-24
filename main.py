@@ -1251,16 +1251,73 @@ def merge_full(layout_name, video01_filename, video02_filename, video03_filename
 
         ],size=(1920, 1080))
 
-
     if layout_name == '3_07':
         clip1 = VideoFileClip(video01_filename, fps_source='fps')
         clip2 = VideoFileClip(video02_filename, fps_source='fps')
         clip3 = VideoFileClip(video03_filename, fps_source='fps')
 
-        new_clip1 = clip1.resize((536, 1080))
-        new_clip2 = clip2.resize((536, 1080))
-        new_clip3 = clip3.resize((536, 1080))
+        total_duration01 = (clip1.duration * 1000) + delay01  # millisecond
+        total_duration02 = (clip2.duration * 1000) + delay02  # millisecond
+        total_duration03 = (clip3.duration * 1000) + delay03  # millisecond
 
+        clip_duration = max(total_duration01, total_duration02, total_duration03) / 1000.0
+
+        new_clip1 = clip1.with_effects([mp.video.fx.Resize((600, 1070))])
+        new_clip1 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(new_clip1)
+        # print('clip1-02 length: ' + str(new_clip1.duration) + " seconds")
+
+        black_video01 = ColorClip(size=(600, 1070), color=(0, 0, 0), duration=clip_duration)
+        black_video01 = mp.video.fx.Margin(5, color=(255, 255, 0)).add_margin(black_video01)
+
+        new_clip1 = mp.video.fx.CrossFadeIn(2).apply(new_clip1)
+        new_clip1 = mp.video.fx.CrossFadeOut(2).apply(new_clip1)
+        new_clip1 = CompositeVideoClip([black_video01.with_position((0, 0)),
+                                        new_clip1.with_position((0, 0)).with_start(milli_to_timecode(delay01))],
+                                       size=(610, 1080))
+        new_clip1 = new_clip1.with_volume_scaled(volume01)
+
+        # print('clip1-03 length: ' + str(new_clip1.duration) + " seconds")
+        new_clip2 = clip2.with_effects([mp.video.fx.Resize((600, 1070))])
+        new_clip2 = mp.video.fx.Margin(top = 5, right = 5, bottom = 5, color=(255, 255, 0)).add_margin(new_clip2)
+
+        black_video02 = ColorClip(size=(600, 1070), color=(0, 0, 0), duration=clip_duration)
+        black_video02 = mp.video.fx.Margin(top = 5, right = 5, bottom = 5, color=(255, 255, 0)).add_margin(black_video02)
+
+        new_clip2 = mp.video.fx.CrossFadeIn(2).apply(new_clip2)
+        new_clip2 = mp.video.fx.CrossFadeOut(2).apply(new_clip2)
+
+        new_clip2 = CompositeVideoClip([black_video02.with_position((0, 0)),
+                                        new_clip2.with_position((0, 0)).with_start(milli_to_timecode(delay02))],
+                                       size=(605, 1080))
+
+
+        new_clip2 = new_clip2.with_volume_scaled(volume02)
+
+        new_clip3 = clip3.with_effects([mp.video.fx.Resize((600, 1070))])
+        new_clip3 = mp.video.fx.Margin(top = 5, right = 5, bottom = 5,  color=(255, 255, 0)).add_margin(new_clip3)
+
+        black_video03 = ColorClip(size=(600, 1070), color=(0, 0, 0), duration=clip_duration)
+        black_video03 = mp.video.fx.Margin(top = 5, right = 5, bottom = 5,  color=(255, 255, 0)).add_margin(black_video03)
+
+        new_clip3 = mp.video.fx.CrossFadeIn(2).apply(new_clip3)
+        new_clip3 = mp.video.fx.CrossFadeOut(2).apply(new_clip3)
+
+        new_clip3 = CompositeVideoClip([black_video03.with_position((0, 0)),
+                                        new_clip3.with_position((0, 0)).with_start(milli_to_timecode(delay03))],
+                                       size=(605, 1080))
+
+        new_clip3 = new_clip3.with_volume_scaled(volume03)
+
+        background = ColorClip(size=(1920, 1080), color=(0, 0, 0),  duration=clip_duration)
+
+        final_clip = CompositeVideoClip([
+            background.with_position((0, 0)),
+
+            new_clip1.with_position((50, 0)),
+            new_clip2.with_position((660, 0)),
+            new_clip3.with_position((1265, 0))
+
+        ], size=(1920, 1080))
 
     if layout_name in layout_list:
     # datetime object containing current date and time
@@ -1426,7 +1483,12 @@ if __name__ == '__main__':
     #           2168, 0, 2168, 0,
     #           1.0, 1.0, 1.0, 1.0, 'omiejung')
 
-    merge_full('3_06', app_media_location + 'Jazz-04-DoubleBass.mp4',app_media_location + 'Jazz-02-Drum-P.mp4',
+    #merge_full('3_06', app_media_location + 'Jazz-04-DoubleBass.mp4',app_media_location + 'Jazz-02-Drum-P.mp4',
+    #           app_media_location + 'Jazz-03-Saxophone-P.mp4', '',
+    #           2168, 0, 2168, 0,
+    #           1.0, 1.0, 1.0, 1.0, 'omiejung')
+
+    merge_full('3_07', app_media_location + 'Jazz-04-DoubleBass-P.mp4', app_media_location + 'Jazz-02-Drum-P.mp4',
                app_media_location + 'Jazz-03-Saxophone-P.mp4', '',
                2168, 0, 2168, 0,
                1.0, 1.0, 1.0, 1.0, 'omiejung')
